@@ -1,5 +1,6 @@
-From docker.io/debian:stable
+From docker.io/debian:stable-slim
 COPY . /app/
-RUN chmod u+x /app/*.sh && /app/install.sh
-ENTRYPOINT ["/app/start.sh"]
+ENV TZ=Asia/Shanghai
+RUN chmod u+x /app/*.sh && /app/_build.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["/usr/sbin/sshd", "-D"]

@@ -1,7 +1,13 @@
 # openssh-server
 
+基于 Debian GNU/Linux 11 (bullseye)，OpenSSH_8.4p1 Debian-5, OpenSSL 1.1.1k，x86-64 架构。
+
+容器默认 UTF-8 时区。
+
+
 ## tags
-- [latest](https://github.com/chenxizhan1995/container-openssh.git)
+- [1.1.0, latest](https://github.com/chenxizhan1995/container-openssh.git)
+- [1.0.0](https://github.com/chenxizhan1995/container-openssh.git)
 
 ## 使用
 默认密码 123456，通过环境变量 -e ROOT_PASSWD 设置root账号的密码。
@@ -15,16 +21,6 @@ podman run -p 8022:22/tcp -dit --name ssh -e ROOT_PASSWD=abcdefg docker.io/chenx
 ssh root@localhost -p 8022
 # 如果提示远程主机密钥指纹不符，使用下面的命令跳过验证
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@localhost -p 8022
-
-# 容器默认是 UTC 时区，可以通过指定 UTC+0800 时区
-# 因为不同软件使用不同的方式确定时区设置，为了保险，
-# 同时使用 环境变量TZ、文件/etc/localtime，文件 /etc/timezone 三种方式
-podman run -p 8022:22/tcp -dit --name ssh \
-  -e ROOT_PASSWD=abcdefg \
-  -e TZ=Asia/Shanghai \
-  -v /etc/localtime:/etc/localtime:ro \
-  -v /etc/timezong:/etc/timezone:ro \
-  docker.io/chenxizhan1995/sshd:latest
 ```
 
 有一个服务，打包成docker镜像，同时还需要通过ssh登录上传文件。一个容器最好只有一个
@@ -40,11 +36,16 @@ podman run -v data-ssh:/data/file -p 8022:22/tcp --name demo-ssh docker.io/chenx
 # 这样，客户端通过ssh连接 demo-ssh 容器，把文件上传到 /data/file 路径下，
 # 在服务 demo-service 就能操作文件了。
 ```
-## 历史
+## 构建镜像
+```bash
+buildah bud -t docker.io/chenxizhan1995/sshd:latest
+podman tag docker.io/chenxizhan1995/sshd:latest docker.io/chenxizhan1995/sshd:1.0.1
+```
 
-### latest
-基于 Debian GNU/Linux 11 (bullseye)，OpenSSH_8.4p1 Debian-5, OpenSSL 1.1.1k
-构建：buildah bud -t docker.io/chenxizhan1995/sshd:latest
+## 历史
+### 1.0.1，latest
+- 把容器的默认时区更改为中国北京时间（U+0800 ）
+### 1.0.0
 
 ## TODO:
 - 当前的镜像是 x86_64 架构的
