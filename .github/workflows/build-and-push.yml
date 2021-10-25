@@ -1,0 +1,28 @@
+# 构建并推送镜像
+name: github ci
+
+on:
+  push:
+    tags: v*
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-push:
+
+    runs-on: ubuntu-latest
+    env:
+      token: ${{secrets.DOCKERHUB_TOKEN}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: buildah bud -t docker.io/chenxizhan1995/openssh-server:latest
+      - name: push last
+        run: buildah push --creds=chenxizhan1995:$token docker.io/chenxizhan1995/openssh-server:latest
+      - name: push version
+        run: |
+          ver=${GITHUB_REF#refs/tags/v}
+          podman tag docker.io/chenxizhan1995/openssh-server:latest docker.io/chenxizhan1995/openssh-server:$ver
+          buildah push --creds=chenxizhan1995:$token docker.io/chenxizhan1995/openssh-server:$ver
