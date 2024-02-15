@@ -50,3 +50,4 @@ podman tag docker.io/chenxizhan1995/openssh-server:latest docker.io/chenxizhan19
 - 当前的镜像是 x86_64 架构的
 - 缩减镜像体积
 - 编写 buildah 风格的构建脚本
+
